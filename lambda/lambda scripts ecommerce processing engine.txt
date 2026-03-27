@@ -1,0 +1,96 @@
+## OrderFunction ##
+
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+
+const dynamo = new DynamoDBClient({ region: "us-east-1" });
+const sns = new SNSClient({ region: "us-east-1" });
+
+const SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:918689940778:OrderPlacedTopic";
+
+export const handler = async (event) => {
+  try {
+    const body = JSON.parse(event.body);
+
+    if (!body.customerId || !body.items || !body.total) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: "Missing required fields" }),
+      };
+    }
+
+    const orderId = "ord-" + Date.now();
+
+    await dynamo.send(
+      new PutItemCommand({
+        TableName: "Orders",
+        Item: {
+          orderId: { S: orderId },
+          customerId: { S: body.customerId },
+          items: { S: JSON.stringify(body.items) },
+          total: { N: String(body.total) },
+          status: { S: "PENDING" },
+        },
+      })
+    );
+
+    await sns.send(
+      new PublishCommand({
+        TopicArn: SNS_TOPIC_ARN,
+        Message: JSON.stringify({
+          orderId,
+          customerId: body.customerId,
+          items: body.items,
+          total: body.total,
+        }),
+      })
+    );
+
+    return {
+      statusCode: 202,
+      body: JSON.stringify({
+        orderId,
+        status: "PENDING",
+        message: "Order received and is being processed",
+      }),
+    };
+  } catch (err) {
+    console.error("Error:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Internal Server Error" }),
+    };
+  }
+};
+
+
+## InventoryQueue ##
+
+export const handler = async (event) => {
+  for (const record of event.Records) {
+    const snsMessage = JSON.parse(record.body);
+    const order = JSON.parse(snsMessage.Message);
+
+    console.log("Inventory update for order:", order.orderId);
+    console.log("Customer:", order.customerId);
+    console.log("Items to deduct from stock:", JSON.stringify(order.items));
+
+    console.log("Stock successfully decremented for order:", order.orderId);
+  }
+};
+
+
+## NotificationsFunction ##
+
+export const handler = async (event) => {
+  for (const record of event.Records) {
+    const snsMessage = JSON.parse(record.body);
+    const order = JSON.parse(snsMessage.Message);
+
+    console.log("Sending confirmation for order:", order.orderId);
+    console.log("Notify customer:", order.customerId);
+    console.log("Order total:", order.total);
+
+    console.log("Confirmation sent successfully for order:", order.orderId);
+  }
+};

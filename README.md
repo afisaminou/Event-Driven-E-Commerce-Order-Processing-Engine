@@ -26,30 +26,8 @@ Because each service works independently, the system remains **resilient, scalab
 
 # Architecture Diagram
 
-flowchart LR
 
-Client[Client Application / Postman]
-
-Client --> APIGW[API Gateway]
-
-APIGW --> OrderLambda[Order Lambda Function]
-
-OrderLambda --> DynamoDB[(DynamoDB Orders Table)]
-
-OrderLambda --> SNS[SNS Topic --> OrderPlacedEvent]
-
-
-SNS --> InventoryQueue[SQS InventoryQueue]
-SNS --> NotificationQueue[SQS NotificationsQueue]
-
-InventoryQueue --> InventoryLambda[Inventory Lambda]
-
-NotificationQueue --> NotificationLambda[Notification Lambda]
-
-
-OrderLambda --> CloudWatch[(CloudWatch Logs)]   
-InventoryLambda --> CloudWatch   
-NotificationLambda --> CloudWatch
+![Architecture Diagram](<Event-Driven E-Commerce Order Processing Engine Architecture Diagram.PNG>)
 
 
 # Technologies Used
@@ -223,4 +201,5 @@ Automate deployment with GitHub Actions.
 Track order lifecycle states such as:
 
 PENDING → PROCESSING → COMPLETED
+
 
