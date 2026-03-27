@@ -1,4 +1,8 @@
-# Event-Driven E-Commerce Order Processing Engine (AWS)
+
+---
+
+# Serverless Event-Driven E-Commerce Order Processing Engine on AWS
+
 
 A serverless event-driven backend that processes e-commerce orders using modern cloud architecture principles.
 This project demonstrates how real-world companies design scalable backend systems where services communicate through **events instead of direct calls**, making the system **fault-tolerant, scalable, and loosely coupled**.
@@ -23,7 +27,6 @@ When a customer places an order:
 Because each service works independently, the system remains **resilient, scalable, and highly available**.
 
 ---
-
 # Architecture Diagram
 
 
@@ -52,7 +55,6 @@ Because each service works independently, the system remains **resilient, scalab
 
 
 # System Workflow
-
 
 
 **Step 1: Order Submission**
@@ -189,5 +191,4 @@ Possible enhancements include:
 - **CI/CD Pipeline:** Automate deployment with GitHub Actions.
 
 - **Order Status Updates:** Track order lifecycle states such as: PENDING → PROCESSING → COMPLETED
-
 
