@@ -76,10 +76,10 @@ SNS broadcasts the order event to two SQS queues.
 
 Two independent services process the event:
 
-**Inventory Service**
+- **Inventory Service**
 Reads the order details and processes stock updates.
 
-**Notification Service**
+- **Notification Service**
 Sends confirmation notifications to the customer.
 
 **Step 5: Monitoring**
@@ -126,34 +126,34 @@ POST /orders
 
 Traditional tightly coupled systems face several limitations:
 
-Problem	                              Impact
 
-Service dependency         	         One failing service breaks the entire system
+## Limitations of Traditional Tightly Coupled Systems
 
-Poor scalability	                     All services scale together
-
-Slow user response         	         Customers wait for all operations to complete
-
-System instability         	         Traffic spikes overwhelm services
+| **Problem**              | **Impact**                                         |
+|--------------------------|----------------------------------------------------|
+| Service dependency       | One failing service breaks the entire system       |
+| Poor scalability         | All services scale together                        |
+| Slow user response       | Customers wait for all operations to complete      |
+| System instability       | Traffic spikes overwhelm services                  |
 
 
 ## Solutions Implemented in This Project
 
 This architecture solves these issues by implementing:
 
-**Event-Driven Architecture**
+- **Event-Driven Architecture**
 
 Services communicate through events rather than direct calls.
 
-**Loose Coupling**
+- **Loose Coupling**
 
 Each service operates independently and can be updated without affecting others.
 
-**Horizontal Scalability**
+- **Horizontal Scalability**
 
 Each Lambda function scales automatically based on demand.
 
-**Asynchronous Processing**
+- **Asynchronous Processing**
 
 Background tasks such as inventory updates and notifications run independently.
 
@@ -164,7 +164,9 @@ Logs for all services are automatically stored in CloudWatch.
 Log groups created:
 
 /aws/lambda/OrderFunction
+
 /aws/lambda/InventoryFunction
+
 /aws/lambda/NotificationFunction
 
 These logs help engineers monitor system behavior and troubleshoot issues.
@@ -176,30 +178,16 @@ This project can be expanded to simulate a full production-grade system.
 
 Possible enhancements include:
 
-**Payment Processing Service**
+- **Payment Processing Service:** Add a payment microservice triggered by the order event.
 
-Add a payment microservice triggered by the order event.
+- **Email Notifications:** Use Amazon SES to send real email confirmations.
 
-**Email Notifications**
+- **Dead Letter Queues:** Capture failed messages for debugging and retry processing.
 
-Use Amazon SES to send real email confirmations.
+- **Infrastructure as Code:** Deploy the entire system using Terraform or CloudFormation.
 
-**Dead Letter Queues**
+- **CI/CD Pipeline:** Automate deployment with GitHub Actions.
 
-Capture failed messages for debugging and retry processing.
-
-**Infrastructure as Code**
-
-Deploy the entire system using Terraform or CloudFormation.
-
-**CI/CD Pipeline**
-
-Automate deployment with GitHub Actions.
-
-**Order Status Updates**
-
-Track order lifecycle states such as:
-
-PENDING → PROCESSING → COMPLETED
+- **Order Status Updates:** Track order lifecycle states such as: PENDING → PROCESSING → COMPLETED
 
 
